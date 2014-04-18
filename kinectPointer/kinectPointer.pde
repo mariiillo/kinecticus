@@ -49,9 +49,6 @@ void setup()
   // enable hands + gesture generation
   kinect.enableHand();
   kinect.startGesture(SimpleOpenNI.GESTURE_WAVE);
-
-  // set how smooth the hand capturing should be
-  kinect.setSmoothingHands(.5);
  }
 
 void draw()
@@ -96,10 +93,10 @@ void draw()
         float interpolatedX = lerp(previousX, p2d.x, 0.3);
         float interpolatedY = lerp(previousY, p2d.y, 0.3);
 
-        mappedX = int(map(interpolatedX, 0, 640, 0, 1280));
-        mappedY = int(map(interpolatedY, 0, 480, 0, 800));
+        mappedX = (int)map(interpolatedX, 0, 640, 0, 1280);
+        mappedY = (int)map(interpolatedY, 0, 480, 0, 800);
 
-        robot.mouseMove(int(mappedX), int(mappedY));
+        robot.mouseMove((int)(mappedX), (int)(mappedY));
 
         previousX = interpolatedX;
         previousY = interpolatedY;
