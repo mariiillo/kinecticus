@@ -121,6 +121,9 @@ void onNewHand(SimpleOpenNI curkinect,int handId,PVector pos)
 void onTrackedHand(SimpleOpenNI curkinect,int handId,PVector pos)
 {
   println("onTrackedHand - handId: " + handId + ", pos: " + pos );
+  println("pos.x: "+pos.x);
+  println("pos.y: "+pos.y);
+  println("pos.z: "+pos.z);
 
   ArrayList<PVector> vecList = handPathList.get(handId);
   if(vecList != null)
@@ -135,6 +138,8 @@ void onTrackedHand(SimpleOpenNI curkinect,int handId,PVector pos)
 void onLostHand(SimpleOpenNI curkinect,int handId)
 {
   println("onLostHand - handId: " + handId);
+  println("======== NO HAND IS BEEN TRACKED! =======");
+  println("****** SHAKE IT AGAIN TO START TRACKING IT *********");
   handPathList.remove(handId);
 }
 
