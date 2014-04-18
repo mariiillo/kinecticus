@@ -92,7 +92,7 @@ void draw(){
       PVector realRHand = new PVector();
 
       // if you want to track the right hand, type SimpleOpenNI.SKEL_LEFT_HAND and viceversa.
-      context.getJointPositionSkeleton(uid, SimpleOpenNI.SKEL_LEFT_HAND, realRHand);
+      float confidence = context.getJointPositionSkeleton(uid, SimpleOpenNI.SKEL_LEFT_HAND, realRHand);
 
       // convert a 3D point to 2D to merge it with the depth image.
       PVector projRHand = new PVector();
@@ -101,7 +101,11 @@ void draw(){
       // render an ellipse.
       fill(0,255,255);
       float ellipseSize = map(projRHand.z, 700, 2500, 50, 1);
-      ellipse(projRHand.x, projRHand.y, ellipseSize, ellipseSize);
+
+      // render if confidence is high
+      if(confidence > 0.5) {
+        ellipse(projRHand.x, projRHand.y, ellipseSize, ellipseSize);
+      }
 
     }
   }
