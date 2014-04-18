@@ -2,6 +2,7 @@ import java.util.Map;
 import java.util.Iterator;
 import java.awt.Robot;
 import java.awt.AWTException;
+import java.awt.event.InputEvent;
 
 import SimpleOpenNI.*;
 
@@ -49,6 +50,7 @@ void setup()
   // enable hands + gesture generation
   kinect.enableHand();
   kinect.startGesture(SimpleOpenNI.GESTURE_WAVE);
+  kinect.startGesture(SimpleOpenNI.GESTURE_CLICK);
  }
 
 void draw()
@@ -90,8 +92,8 @@ void draw()
         kinect.convertRealWorldToProjective(p,p2d);
         point(p2d.x,p2d.y);
 
-        float interpolatedX = lerp(previousX, p2d.x, 0.3);
-        float interpolatedY = lerp(previousY, p2d.y, 0.3);
+        float interpolatedX = lerp(previousX, p2d.x, 0.05);
+        float interpolatedY = lerp(previousY, p2d.y, 0.05);
 
         mappedX = (int)map(interpolatedX, 0, 640, 0, 1280);
         mappedY = (int)map(interpolatedY, 0, 480, 0, 800);
@@ -120,10 +122,10 @@ void onNewHand(SimpleOpenNI curkinect,int handId,PVector pos)
 
 void onTrackedHand(SimpleOpenNI curkinect,int handId,PVector pos)
 {
-  println("onTrackedHand - handId: " + handId + ", pos: " + pos );
-  println("pos.x: "+pos.x);
-  println("pos.y: "+pos.y);
-  println("pos.z: "+pos.z);
+  // println("onTrackedHand - handId: " + handId + ", pos: " + pos );
+  // println("pos.x: "+pos.x);
+  // println("pos.y: "+pos.y);
+  // println("pos.z: "+pos.z);
 
   ArrayList<PVector> vecList = handPathList.get(handId);
   if(vecList != null)
@@ -149,7 +151,13 @@ void onLostHand(SimpleOpenNI curkinect,int handId)
 void onCompletedGesture(SimpleOpenNI curkinect,int gestureType, PVector pos)
 {
   println("onCompletedGesture - gestureType: " + gestureType + ", pos: " + pos);
-
-  int handId = kinect.startTrackingHand(pos);
-  println("hand stracked: " + handId);
+  if(gestureType == 1) {
+    robot.mousePress(InputEvent.BUTTON1_MASK);
+    robot.mouseRelease(InputEvent.BUTTON1_MASK);
+    // robot.mousePress(InputEvent.BUTTON1_MASK);
+    // robot.mouseRelease(InputEvent.BUTTON1_MASK);
+  }else{
+    int handId = kinect.startTrackingHand(pos);
+    println("hand stracked: " + handId);
+  }
 }
