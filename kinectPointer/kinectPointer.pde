@@ -135,6 +135,12 @@ void onTrackedHand(SimpleOpenNI curkinect,int handId,PVector pos)
       // remove the last point
       vecList.remove(vecList.size()-1);
   }
+
+  if(pos.y < -460 ) {
+    robot.mouseWheel(-1);
+  }else if(pos.y > 480) {
+    robot.mouseWheel(1);
+  }
 }
 
 void onLostHand(SimpleOpenNI curkinect,int handId)
