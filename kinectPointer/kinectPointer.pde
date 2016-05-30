@@ -48,9 +48,11 @@ void setup()
   kinect.setMirror(true);
 
   // enable hands + gesture generation
-  kinect.enableHand();
-  kinect.startGesture(SimpleOpenNI.GESTURE_WAVE);
-  kinect.startGesture(SimpleOpenNI.GESTURE_CLICK);
+  kinect.enableHands();
+  kinect.enableGesture();
+  kinect.addGesture("RaiseHand");
+//  kinect.addGesture("Wave");
+  kinect.addGesture("Click");
  }
 
 void draw()
@@ -110,60 +112,56 @@ void draw()
 // -----------------------------------------------------------------
 // hand events
 
-void onNewHand(SimpleOpenNI curkinect,int handId,PVector pos)
+void onCreateHands(int handId, PVector position, float time)
 {
-  println("onNewHand - handId: " + handId + ", pos: " + pos);
+  println("onNewHand - handId: " + handId + ", pos: " + position);
 
   ArrayList<PVector> vecList = new ArrayList<PVector>();
-  vecList.add(pos);
+  vecList.add(position);
 
   handPathList.put(handId,vecList);
 }
 
-void onTrackedHand(SimpleOpenNI curkinect,int handId,PVector pos)
+void onUpdateHands(int handId, PVector position, float time)
 {
-  // println("onTrackedHand - handId: " + handId + ", pos: " + pos );
-  // println("pos.x: "+pos.x);
-  // println("pos.y: "+pos.y);
-  // println("pos.z: "+pos.z);
-
+  println("onUpdateHands - handId: " + handId + ", pos: " + position );
+  
   ArrayList<PVector> vecList = handPathList.get(handId);
   if(vecList != null)
   {
-    vecList.add(0,pos);
+    vecList.add(0,position);
     if(vecList.size() >= handVecListSize)
       // remove the last point
       vecList.remove(vecList.size()-1);
   }
 
-  if(pos.y < -460 ) {
+  if(position.y < -460 ) {
     robot.mouseWheel(-1);
-  }else if(pos.y > 480) {
+  }else if(position.y > 480) {
     robot.mouseWheel(1);
   }
 }
 
-void onLostHand(SimpleOpenNI curkinect,int handId)
+void onDestroyHands(int handId, float time)
 {
-  println("onLostHand - handId: " + handId);
+  println("onDestroyHands - handId: " + handId);
   println("======== NO HAND IS BEEN TRACKED! =======");
   println("****** SHAKE IT AGAIN TO START TRACKING IT *********");
   handPathList.remove(handId);
+  kinect.addGesture("RaiseHand");
 }
 
 // -----------------------------------------------------------------
 // gesture events
 
-void onCompletedGesture(SimpleOpenNI curkinect,int gestureType, PVector pos)
-{
-  println("onCompletedGesture - gestureType: " + gestureType + ", pos: " + pos);
-  if(gestureType == 1) {
+void onRecognizeGesture(String strGesture, PVector idPosition, PVector position) {  
+  if(strGesture.equals("RaiseHand")) {
+    println("Start tracking hands");
+    kinect.removeGesture("RaiseHand");
+    kinect.startTrackingHands(position);
+  } else if (strGesture.equals("Click")) {
+    println("Click");
     robot.mousePress(InputEvent.BUTTON1_MASK);
     robot.mouseRelease(InputEvent.BUTTON1_MASK);
-    // robot.mousePress(InputEvent.BUTTON1_MASK);
-    // robot.mouseRelease(InputEvent.BUTTON1_MASK);
-  }else{
-    int handId = kinect.startTrackingHand(pos);
-    println("hand stracked: " + handId);
   }
 }
